@@ -62,7 +62,7 @@ jobs:
         WORKFLOW_NAME="WF_ADB"
         
         echo "Verificando si existe el workflow: $WORKFLOW_NAME"
-        # Cambio para PR 
+        # Cambio para PR 1
         # Listar todos los workflows y buscar por nombre
         workflows_response=$(curl -s -X GET \
           -H "Authorization: Bearer $DEST_TOKEN" \
@@ -204,7 +204,7 @@ jobs:
                   "task_key": "tarea3_notebook3"
                 }
               ]
-            },
+            }
 
           ],
           "schedule": {
