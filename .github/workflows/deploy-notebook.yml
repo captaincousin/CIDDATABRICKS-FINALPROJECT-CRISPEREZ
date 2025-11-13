@@ -62,7 +62,7 @@ jobs:
         WORKFLOW_NAME="WF_ADB"
         
         echo "Verificando si existe el workflow: $WORKFLOW_NAME"
-        # Cambio para PR 4
+        # Cambio para PR 5
         # Listar todos los workflows y buscar por nombre
         workflows_response=$(curl -s -X GET \
           -H "Authorization: Bearer $DEST_TOKEN" \
