@@ -59,7 +59,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_ADB"
+        WORKFLOW_NAME="sp-crisperez-project"
         
         echo "Verificando si existe el workflow: $WORKFLOW_NAME"
         # Cambio para PR 5
@@ -111,23 +111,23 @@ jobs:
           exit 1
         fi
     
-    - name: Create Databricks Workflow WF_ADB
+    - name: Create Databricks Workflow sp-crisperez-project
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
         DEST_BASE="/py/scripts/main"
         CLUSTER_ID="${{ env.CLUSTER_ID }}"
         
-        echo "Creando workflow: WF_ADB con cluster existente ID: $CLUSTER_ID"
+        echo "Creando workflow: sp-crisperez-project con cluster existente ID: $CLUSTER_ID"
         
         # Crear el JSON del workflow usando cluster existente
         cat > workflow_config.json << EOF
         {
-          "name": "WF_ADB",
+          "name": "sp-crisperez-project",
           "format": "MULTI_TASK",
           "tasks": [
             {
-              "task_key": "tarea1_notebook1",
+              "task_key": "tarea1_env-preparation",
               "description": "Ejecuta notebook 1_env-preparation con parámetros",
               "notebook_task": {
                 "notebook_path": "/py/scripts/main/1_env-preparation",
@@ -141,7 +141,7 @@ jobs:
               "max_retries": 2
             },
             {
-              "task_key": "tarea2_notebook2",
+              "task_key": "tarea2_extract",
               "description": "Ejecuta notebook 2_extract con parámetros",
               "notebook_task": {
                 "notebook_path": "/py/scripts/main/2_extract",
@@ -157,13 +157,13 @@ jobs:
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "tarea1_notebook1"
+                  "task_key": "tarea1_env-preparation"
                 }
               ]
             },
 
             {
-              "task_key": "tarea3_notebook3",
+              "task_key": "tarea3_transform",
               "description": "Ejecuta notebook 3_transform con parámetros",
               "notebook_task": {
                 "notebook_path": "/py/scripts/main/3_transform",
@@ -179,13 +179,13 @@ jobs:
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "tarea2_notebook2"
+                  "task_key": "tarea2_extract"
                 }
               ]
             },
 
             {
-              "task_key": "tarea4_notebook4",
+              "task_key": "tarea4_load",
               "description": "Ejecuta notebook 4_load con parámetros",
               "notebook_task": {
                 "notebook_path": "/py/scripts/main/4_load",
@@ -201,7 +201,7 @@ jobs:
               "max_retries": 2,
               "depends_on": [
                 {
-                  "task_key": "tarea3_notebook3"
+                  "task_key": "tarea3_transform"
                 }
               ]
             }
@@ -242,7 +242,7 @@ jobs:
         job_id=$(echo "$create_response" | jq -r '.job_id')
         
         if [ "$job_id" != "" ] && [ "$job_id" != "null" ]; then
-          echo "✅ Workflow 'WF_ADB' creado exitosamente con ID: $job_id"
+          echo "✅ Workflow 'sp-crisperez-project' creado exitosamente con ID: $job_id"
           
           # Obtener detalles del workflow creado
           workflow_details=$(curl -s -X GET \
@@ -261,7 +261,7 @@ jobs:
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_ADB"
+        WORKFLOW_NAME="sp-crisperez-project"
         
         echo "🔍 Validando la configuración del workflow creado..."
         
@@ -296,11 +296,11 @@ jobs:
           exit 1
         fi
     
-    - name: Execute Workflow WF_ADB
+    - name: Execute Workflow sp-crisperez-project
       run: |
         DEST_HOST=${{ secrets.DATABRICKS_DEST_HOST }}
         DEST_TOKEN=${{ secrets.DATABRICKS_DEST_TOKEN }}
-        WORKFLOW_NAME="WF_ADB"
+        WORKFLOW_NAME="sp-crisperez-project"
         
         echo "🚀 Ejecutando workflow: $WORKFLOW_NAME"
         
@@ -428,12 +428,12 @@ jobs:
         echo ""
         echo "📊 Resumen:"
         echo "✅ Notebooks desplegados: 1_env-preparation, 2_extract, 3_transform, 4_load"
-        echo "✅ Workflow creado: WF_ADB"
+        echo "✅ Workflow creado: sp-crisperez-project"
         echo "✅ Tareas configuradas:"
-        echo "   - tarea1_notebook1 (1_env-preparation)"
-        echo "   - tarea2_notebook2 (2_extract)"
-        echo "   - tarea3_notebook3 (3_transform)"
-        echo "   - tarea4_notebook4 (4_load)"
+        echo "   - tarea1_env-preparation (1_env-preparation)"
+        echo "   - tarea2_extract (2_extract)"
+        echo "   - tarea3_transform (3_transform)"
+        echo "   - tarea4_load (4_load)"
         echo "✅ Cluster existente: cluster-crisperez configurado"
         echo "🚀 Workflow ejecutado automáticamente"
         echo ""
