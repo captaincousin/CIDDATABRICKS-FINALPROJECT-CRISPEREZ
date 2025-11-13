@@ -1,0 +1,675 @@
+{
+  "datasets": [
+    {
+      "name": "ff2fa7f1",
+      "displayName": "Tile 1 – KPI principal (promedio de nota)",
+      "queryLines": [
+        "SELECT\r\n",
+        "  ROUND(AVG(Exam_Score), 1) AS avg_exam,\r\n",
+        "  COUNT(*)                 AS total_students\r\n",
+        "FROM catalog_dev.golden.fact_student_performance;"
+      ]
+    },
+    {
+      "name": "1ed75118",
+      "displayName": "Tile 2 – Promedio por género",
+      "queryLines": [
+        "SELECT\r\n",
+        "  Gender,\r\n",
+        "  avg_exam,\r\n",
+        "  n\r\n",
+        "FROM catalog_dev.golden.agg_exam_by_gender;\r\n"
+      ]
+    },
+    {
+      "name": "5038c290",
+      "displayName": "Tile 3 – Promedio por horas de estudio",
+      "queryLines": [
+        "SELECT\r\n",
+        "  hours_bucket,\r\n",
+        "  avg_exam,\r\n",
+        "  n\r\n",
+        "FROM catalog_dev.golden.agg_exam_by_hours_bucket\r\n",
+        "ORDER BY CASE hours_bucket\r\n",
+        "           WHEN '0-5' THEN 1\r\n",
+        "           WHEN '6-10' THEN 2\r\n",
+        "           WHEN '11-15' THEN 3\r\n",
+        "           WHEN '16-20' THEN 4\r\n",
+        "           ELSE 5\r\n",
+        "         END;\r\n"
+      ]
+    },
+    {
+      "name": "0a5a20b4",
+      "displayName": "Tile 4 – Promedio por asistencia",
+      "queryLines": [
+        "SELECT\r\n",
+        "  attendance_bucket,\r\n",
+        "  avg_exam,\r\n",
+        "  n\r\n",
+        "FROM catalog_dev.golden.agg_exam_by_attendance_bucket\r\n",
+        "ORDER BY CASE attendance_bucket\r\n",
+        "           WHEN '<50'   THEN 1\r\n",
+        "           WHEN '50-75' THEN 2\r\n",
+        "           WHEN '76-90' THEN 3\r\n",
+        "           ELSE 4\r\n",
+        "         END;"
+      ]
+    },
+    {
+      "name": "019b7808",
+      "displayName": "Tile 5 – Motivación vs desempeño",
+      "queryLines": [
+        "SELECT\r\n",
+        "  Motivation_Level,\r\n",
+        "  avg_exam,\r\n",
+        "  n\r\n",
+        "FROM catalog_dev.golden.agg_exam_by_motivation\r\n",
+        "ORDER BY avg_exam DESC;"
+      ]
+    },
+    {
+      "name": "323549ec",
+      "displayName": "Tile 6 – School Type vs Income",
+      "queryLines": [
+        "SELECT\r\n",
+        "  School_Type,\r\n",
+        "  Family_Income,\r\n",
+        "  ROUND(avg_exam, 1) AS avg_exam,\r\n",
+        "  n\r\n",
+        "FROM catalog_dev.golden.agg_exam_school_vs_income;"
+      ]
+    },
+    {
+      "name": "04e630f2",
+      "displayName": "Tile 7 – Correlaciones",
+      "queryLines": [
+        "SELECT\r\n",
+        "  feature,\r\n",
+        "  corr\r\n",
+        "FROM catalog_dev.golden.corr_with_exam\r\n",
+        "ORDER BY corr DESC;"
+      ]
+    },
+    {
+      "name": "110a4b5d",
+      "displayName": "Tile 8 – Dispersión horas vs nota",
+      "queryLines": [
+        "SELECT\r\n",
+        "  Hours_Studied,\r\n",
+        "  Exam_Score,\r\n",
+        "  Gender\r\n",
+        "FROM catalog_dev.golden.fact_student_performance;"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "93dd7037",
+      "displayName": "Main Dashboard",
+      "layout": [
+        {
+          "widget": {
+            "name": "exam-score-promedio",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ff2fa7f1",
+                  "fields": [
+                    {
+                      "name": "total_students",
+                      "expression": "`total_students`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "total_students"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": "Total de estudiantes"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "aa377482",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ff2fa7f1",
+                  "fields": [
+                    {
+                      "name": "avg_exam",
+                      "expression": "`avg_exam`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg_exam"
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": "Exam score promedio"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 2,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "promedio-nota-genero",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1ed75118",
+                  "fields": [
+                    {
+                      "name": "sum(avg_exam)",
+                      "expression": "SUM(`avg_exam`)"
+                    },
+                    {
+                      "name": "Gender",
+                      "expression": "`Gender`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "sum(avg_exam)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Gender",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Promedio de nota por género"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 0,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "nota-promedio-horas-estudio",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "5038c290",
+                  "fields": [
+                    {
+                      "name": "hours_bucket",
+                      "expression": "`hours_bucket`"
+                    },
+                    {
+                      "name": "sum(avg_exam)",
+                      "expression": "SUM(`avg_exam`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "combo",
+              "encodings": {
+                "x": {
+                  "fieldName": "hours_bucket",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(avg_exam)"
+                      }
+                    ]
+                  },
+                  "secondary": {
+                    "fields": []
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Nota promedio por horas de estudio"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 3,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "nota-promedio-asistencia",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0a5a20b4",
+                  "fields": [
+                    {
+                      "name": "attendance_bucket",
+                      "expression": "`attendance_bucket`"
+                    },
+                    {
+                      "name": "sum(avg_exam)",
+                      "expression": "SUM(`avg_exam`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "area",
+              "encodings": {
+                "x": {
+                  "fieldName": "attendance_bucket",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(avg_exam)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Nota promedio por asistencia"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 12,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "motivacion-vs-nota",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "019b7808",
+                  "fields": [
+                    {
+                      "name": "Motivation_Level",
+                      "expression": "`Motivation_Level`"
+                    },
+                    {
+                      "name": "sum(avg_exam)",
+                      "expression": "SUM(`avg_exam`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "Motivation_Level",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(avg_exam)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Motivación vs nota"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 12,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "tipo-colegio-vs-ingreso-familiar",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "323549ec",
+                  "fields": [
+                    {
+                      "name": "School_Type",
+                      "expression": "`School_Type`"
+                    },
+                    {
+                      "name": "Family_Income",
+                      "expression": "`Family_Income`"
+                    },
+                    {
+                      "name": "sum(avg_exam)",
+                      "expression": "SUM(`avg_exam`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "School_Type"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "Family_Income"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`School_Type`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`Family_Income`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "School_Type"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "Family_Income"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "sum(avg_exam)",
+                      "cellType": "text"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Tipo de colegio vs ingreso familiar"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 0,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "correlacion-variables-nota",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "04e630f2",
+                  "fields": [
+                    {
+                      "name": "feature",
+                      "expression": "`feature`"
+                    },
+                    {
+                      "name": "corr",
+                      "expression": "`corr`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 1,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "feature",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "string",
+                    "displayAs": "string",
+                    "visible": true,
+                    "order": 100000,
+                    "title": "feature",
+                    "allowSearch": false,
+                    "alignContent": "left",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  },
+                  {
+                    "fieldName": "corr",
+                    "numberFormat": "0.00",
+                    "booleanValues": [
+                      "false",
+                      "true"
+                    ],
+                    "imageUrlTemplate": "{{ @ }}",
+                    "imageTitleTemplate": "{{ @ }}",
+                    "imageWidth": "",
+                    "imageHeight": "",
+                    "linkUrlTemplate": "{{ @ }}",
+                    "linkTextTemplate": "{{ @ }}",
+                    "linkTitleTemplate": "{{ @ }}",
+                    "linkOpenInNewTab": true,
+                    "type": "float",
+                    "displayAs": "number",
+                    "visible": true,
+                    "order": 100001,
+                    "title": "corr",
+                    "allowSearch": false,
+                    "alignContent": "right",
+                    "allowHTML": false,
+                    "highlightLinks": false,
+                    "useMonospaceFont": false,
+                    "preserveWhitespace": false
+                  }
+                ]
+              },
+              "invisibleColumns": [],
+              "allowHTMLByDefault": false,
+              "itemsPerPage": 25,
+              "paginationSize": "default",
+              "condensed": true,
+              "withRowNumber": false,
+              "frame": {
+                "showTitle": true,
+                "title": "Correlación de variables con la nota"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 2,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "relacion-horas-estudiadas-vs-nota-1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "110a4b5d",
+                  "fields": [
+                    {
+                      "name": "Hours_Studied",
+                      "expression": "`Hours_Studied`"
+                    },
+                    {
+                      "name": "Exam_Score",
+                      "expression": "`Exam_Score`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "Hours_Studied",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "Exam_Score",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Relación horas estudiadas vs nota"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 6,
+            "width": 3,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    },
+    {
+      "name": "0409d3ac",
+      "displayName": "Global Filters",
+      "pageType": "PAGE_TYPE_GLOBAL_FILTERS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "genieSpace": {
+      "isEnabled": false
+    },
+    "applyModeEnabled": false
+  }
+}
