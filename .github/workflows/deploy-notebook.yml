@@ -130,7 +130,7 @@ jobs:
               "task_key": "tarea1_notebook1",
               "description": "Ejecuta notebook 1_env-preparation con parámetros",
               "notebook_task": {
-                "notebook_path": "/py/scripts/main/preparation",
+                "notebook_path": "/py/scripts/main/1_env-preparation",
                 "source": "WORKSPACE",
                 "base_parameters": {
                   "storageLocation": "storage"
