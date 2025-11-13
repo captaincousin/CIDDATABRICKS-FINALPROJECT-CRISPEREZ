@@ -11,6 +11,13 @@
 # MAGIC --ALTER GROUP usuarios ADD USER 'mariita.2004_hotmail.com#EXT#@mariita2004hotmail.onmicrosoft.com';
 # MAGIC
 # MAGIC -- ------------------------------------------------------------
+# MAGIC -- (Importante al ejecutar Pipeline Final) Permisos al usuario que corre el job en el Storage Credential.
+# MAGIC -- ------------------------------------------------------------
+# MAGIC --GRANT CREATE EXTERNAL LOCATION
+# MAGIC --ON STORAGE CREDENTIAL `cbfaa23e-8ed3-4888-9eea-0f69279003a7-storage-credential-1762744537742`
+# MAGIC --TO `usuarios`;
+# MAGIC
+# MAGIC -- ------------------------------------------------------------
 # MAGIC -- 2) Permiso para usar el catálogo (requerido para cualquier acción dentro de catalog_dev)
 # MAGIC -- ------------------------------------------------------------
 # MAGIC GRANT USE CATALOG ON CATALOG catalog_dev TO `usuarios`;
