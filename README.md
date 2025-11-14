@@ -49,7 +49,7 @@ El flujo completo incluye **ingestión**, **limpieza**, **transformación**, **a
 
 ### 📌 Pipeline ejecutado en Databricks
 
-![Pipeline Databricks](./dashboard/Pipeline%20databricks%20-%20despligue%20exitoso.png)
+<img width="1282" height="285" alt="image" src="https://github.com/user-attachments/assets/5062ffba-2206-45ab-bce8-9e28551d7dbd" />
 
 ---
 
@@ -164,7 +164,8 @@ Archivo:
 
 Vista previa:
 
-![Student Performance  Golden UC.png](./Student Performance  Golden UC.png "Student Performance  Golden UC.png")
+<img width="1358" height="932" alt="Student Performance  Golden UC" src="https://github.com/user-attachments/assets/fd91e0f5-2acf-4904-a6fc-c39d9191bce8" />
+
 
 Incluye KPIs como:
 
